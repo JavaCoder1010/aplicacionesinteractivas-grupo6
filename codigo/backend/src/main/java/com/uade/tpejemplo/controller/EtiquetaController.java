@@ -5,7 +5,6 @@ import com.uade.tpejemplo.dto.response.ClienteResponse;
 import com.uade.tpejemplo.dto.response.EtiquetaResponse;
 import com.uade.tpejemplo.service.EtiquetaService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +13,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/etiquetas")
-@RequiredArgsConstructor
 public class EtiquetaController {
 
     private final EtiquetaService etiquetaService;
+
+    public EtiquetaController(EtiquetaService etiquetaService) {
+        this.etiquetaService = etiquetaService;
+    }
 
     @PostMapping
     public ResponseEntity<EtiquetaResponse> crear(@Valid @RequestBody EtiquetaRequest request) {

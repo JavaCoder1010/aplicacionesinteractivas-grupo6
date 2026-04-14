@@ -15,20 +15,28 @@ import com.uade.tpejemplo.repository.ClienteRepository;
 import com.uade.tpejemplo.repository.EtiquetaRepository;
 import com.uade.tpejemplo.repository.UsuarioRepository;
 import com.uade.tpejemplo.service.EtiquetaService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class EtiquetaServiceImpl implements EtiquetaService {
 
     private final EtiquetaRepository etiquetaRepository;
     private final ClienteRepository clienteRepository;
     private final ClienteEtiquetaRepository clienteEtiquetaRepository;
     private final UsuarioRepository usuarioRepository;
+
+    public EtiquetaServiceImpl(EtiquetaRepository etiquetaRepository,
+                               ClienteRepository clienteRepository,
+                               ClienteEtiquetaRepository clienteEtiquetaRepository,
+                               UsuarioRepository usuarioRepository) {
+        this.etiquetaRepository = etiquetaRepository;
+        this.clienteRepository = clienteRepository;
+        this.clienteEtiquetaRepository = clienteEtiquetaRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
 
     // -------------------------------------------------------
     // CRUD de etiquetas

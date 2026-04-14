@@ -6,7 +6,6 @@ import com.uade.tpejemplo.dto.response.ClienteResponse;
 import com.uade.tpejemplo.service.ClienteService;
 import com.uade.tpejemplo.service.EtiquetaService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,11 +15,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clientes")
-@RequiredArgsConstructor
 public class ClienteController {
 
     private final ClienteService clienteService;
     private final EtiquetaService etiquetaService;
+
+    public ClienteController(ClienteService clienteService, EtiquetaService etiquetaService) {
+        this.clienteService = clienteService;
+        this.etiquetaService = etiquetaService;
+    }
 
     @PostMapping
     public ResponseEntity<ClienteResponse> crear(@Valid @RequestBody ClienteRequest request) {

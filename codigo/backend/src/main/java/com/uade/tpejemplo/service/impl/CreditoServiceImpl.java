@@ -13,7 +13,6 @@ import com.uade.tpejemplo.repository.CobranzaRepository;
 import com.uade.tpejemplo.repository.CreditoRepository;
 import com.uade.tpejemplo.repository.CuotaRepository;
 import com.uade.tpejemplo.service.CreditoService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class CreditoServiceImpl implements CreditoService {
 
     private final CreditoRepository creditoRepository;
     private final ClienteRepository clienteRepository;
     private final CuotaRepository cuotaRepository;
     private final CobranzaRepository cobranzaRepository;
+
+    public CreditoServiceImpl(CreditoRepository creditoRepository,
+                              ClienteRepository clienteRepository,
+                              CuotaRepository cuotaRepository,
+                              CobranzaRepository cobranzaRepository) {
+        this.creditoRepository = creditoRepository;
+        this.clienteRepository = clienteRepository;
+        this.cuotaRepository = cuotaRepository;
+        this.cobranzaRepository = cobranzaRepository;
+    }
 
     @Override
     @Transactional

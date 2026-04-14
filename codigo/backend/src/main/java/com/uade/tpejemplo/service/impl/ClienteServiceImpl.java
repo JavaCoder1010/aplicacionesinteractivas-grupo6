@@ -8,18 +8,22 @@ import com.uade.tpejemplo.model.Cliente;
 import com.uade.tpejemplo.repository.ClienteEtiquetaRepository;
 import com.uade.tpejemplo.repository.ClienteRepository;
 import com.uade.tpejemplo.service.ClienteService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final ClienteEtiquetaRepository clienteEtiquetaRepository;
+
+    public ClienteServiceImpl(ClienteRepository clienteRepository,
+                              ClienteEtiquetaRepository clienteEtiquetaRepository) {
+        this.clienteRepository = clienteRepository;
+        this.clienteEtiquetaRepository = clienteEtiquetaRepository;
+    }
 
     @Override
     @Transactional

@@ -10,17 +10,20 @@ import com.uade.tpejemplo.model.CuotaId;
 import com.uade.tpejemplo.repository.CobranzaRepository;
 import com.uade.tpejemplo.repository.CuotaRepository;
 import com.uade.tpejemplo.service.CobranzaService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class CobranzaServiceImpl implements CobranzaService {
 
     private final CobranzaRepository cobranzaRepository;
     private final CuotaRepository cuotaRepository;
+
+    public CobranzaServiceImpl(CobranzaRepository cobranzaRepository, CuotaRepository cuotaRepository) {
+        this.cobranzaRepository = cobranzaRepository;
+        this.cuotaRepository = cuotaRepository;
+    }
 
     @Override
     public CobranzaResponse registrar(CobranzaRequest request) {

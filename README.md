@@ -67,3 +67,4 @@ Todos los endpoints (salvo `/api/auth`) están protegidos mediante **JWT (JSON W
 | `POST` | `/api/clientes/{cuit}/etiquetas/{etiquetaId}` | Asigna una etiqueta al cliente. Extre el nombre del "asignador" del token JWT. |
 | `DELETE` | `/api/clientes/{cuit}/etiquetas/{etiquetaId}` | Remueve una etiqueta de un cliente. |
 | `GET` | `/api/clientes/{cuit}/etiquetas` | Lista de etiquetas activas de un cliente puntual, detallando fecha y autor de la asignación. |
+

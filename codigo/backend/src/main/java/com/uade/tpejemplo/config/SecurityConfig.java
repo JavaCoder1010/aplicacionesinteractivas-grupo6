@@ -1,7 +1,7 @@
 package com.uade.tpejemplo.config;
 
 import com.uade.tpejemplo.security.JwtAuthFilter;
-import lombok.RequiredArgsConstructor;
+import com.uade.tpejemplo.security.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,11 +18,19 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final UserDetailsService userDetailsService;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter,
+                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                          UserDetailsService userDetailsService) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,6 +38,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .headers(headers -> headers.frameOptions(frame -> frame.disable()))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
                 .anyRequest().authenticated()
