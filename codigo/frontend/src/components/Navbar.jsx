@@ -18,6 +18,7 @@ export default function Navbar() {
       {user && (
         <div style={styles.links}>
           <Link to="/clientes"  style={styles.link}>Clientes</Link>
+          <Link to="/etiquetas" style={styles.link}>Etiquetas</Link>
           <Link to="/creditos"  style={styles.link}>Créditos</Link>
           <Link to="/cobranzas" style={styles.link}>Cobranzas</Link>
           <span style={styles.user}>👤 {user.username}</span>
