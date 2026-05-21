@@ -11,8 +11,20 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const result = await dispatch(loginThunk(form));
-    if (result.meta.requestStatus === 'fulfilled') navigate('/clientes');
+
+    if (result.meta.requestStatus === 'fulfilled') {
+      const usuario = result.payload;
+
+      sessionStorage.setItem('token', usuario.token);
+      sessionStorage.setItem('username', usuario.username);
+      sessionStorage.setItem('rol', usuario.rol);
+      sessionStorage.setItem('puedeAnularCredito', usuario.puedeAnularCredito);
+      sessionStorage.setItem('puedeAnularCobranza', usuario.puedeAnularCobranza);
+
+      navigate('/clientes');
+    }
   };
 
   return (
@@ -20,14 +32,35 @@ export default function Login() {
       <div style={styles.card}>
         <h2 style={styles.title}>Iniciar sesión</h2>
         {error && <div style={styles.error}>{error}</div>}
+
         <form onSubmit={handleSubmit}>
           <label style={styles.label}>Usuario</label>
-          <input style={styles.input} name="username" value={form.username} onChange={e => setForm({...form, username: e.target.value})} required />
+          <input
+            style={styles.input}
+            name="username"
+            value={form.username}
+            onChange={e => setForm({ ...form, username: e.target.value })}
+            required
+          />
+
           <label style={styles.label}>Contraseña</label>
-          <input style={styles.input} name="password" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required />
-          <button style={styles.btn} disabled={loading}>{loading ? 'Ingresando...' : 'Ingresar'}</button>
+          <input
+            style={styles.input}
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={e => setForm({ ...form, password: e.target.value })}
+            required
+          />
+
+          <button style={styles.btn} disabled={loading}>
+            {loading ? 'Ingresando...' : 'Ingresar'}
+          </button>
         </form>
-        <p style={styles.footer}>¿No tenés cuenta? <Link to="/register">Registrate</Link></p>
+
+        <p style={styles.footer}>
+          ¿No tenés cuenta? <Link to="/register">Registrate</Link>
+        </p>
       </div>
     </div>
   );

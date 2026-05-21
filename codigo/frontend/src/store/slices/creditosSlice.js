@@ -1,14 +1,27 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getCreditosPorCliente, crearCredito } from '../../api/creditos';
+import { getCreditosPorCliente, crearCredito, anularCredito } from '../../api/creditos';
 
-export const fetchCreditosPorCliente = createAsyncThunk('creditos/fetchPorCliente', async (dni, { rejectWithValue }) => {
-  try {
-    return await getCreditosPorCliente(dni);
-  } catch (err) {
-    return rejectWithValue(err.message);
+export const anularCreditoThunk = createAsyncThunk(
+  'creditos/anular',
+  async (id, { rejectWithValue }) => {
+    try {
+      return await anularCredito(id);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
   }
-});
+);
 
+export const fetchCreditosPorCliente = createAsyncThunk(
+  'creditos/fetchPorCliente',
+  async (cuit, { rejectWithValue }) => {
+    try {
+      return await getCreditosPorCliente(cuit);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 export const addCredito = createAsyncThunk('creditos/add', async (data, { rejectWithValue }) => {
   try {
     return await crearCredito(data);
@@ -35,8 +48,11 @@ const creditosSlice = createSlice({
       .addCase(fetchCreditosPorCliente.rejected,  (state, action) => { state.loading = false; state.error = action.payload; })
       .addCase(addCredito.pending,                (state) => { state.loading = true;  state.error = null; })
       .addCase(addCredito.fulfilled,              (state, action) => { state.loading = false; state.lista.push(action.payload); })
-      .addCase(addCredito.rejected,               (state, action) => { state.loading = false; state.error = action.payload; });
-  },
+      .addCase(addCredito.rejected,               (state, action) => { state.loading = false; state.error = action.payload; })
+      .addCase(anularCreditoThunk.pending, (state) => {state.loading = true;state.error = null;})
+      .addCase(anularCreditoThunk.fulfilled, (state, action) => {state.loading = false;const creditoActualizado = action.payload;const index = state.lista.findIndex(c => c.id === creditoActualizado.id);if (index !== -1) {state.lista[index] = creditoActualizado;}})
+      .addCase(anularCreditoThunk.rejected, (state, action) => {state.loading = false;state.error = action.payload;});
+    },
 });
 
 export const { clearCreditos, clearError } = creditosSlice.actions;

@@ -18,8 +18,9 @@ public class UsuarioResponse {
     private Long id;
     private String username;
     private String rol;
+    private boolean puedeAnularCredito;
+    private boolean puedeAnularCobranza;
 
     // TODO: Entrega 3 — descomentar cuando se agreguen los campos a Usuario.java
-    // private boolean puedeAnularCredito;
-    // private boolean puedeAnularCobranza;
+    
 }

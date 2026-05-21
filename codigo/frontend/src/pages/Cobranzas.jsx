@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCobranzasPorCredito, addCobranza, clearCobranzas } from '../store/slices/cobranzasSlice';
+import { fetchCobranzasPorCredito, addCobranza, clearCobranzas, anularCobranzaThunk } from '../store/slices/cobranzasSlice';
 
 export default function Cobranzas() {
   const dispatch = useDispatch();
   const { lista, loading, error } = useSelector((state) => state.cobranzas);
+  const user = useSelector((state) => state.auth.user);
+  const puedeAnularCobranza = Boolean(user?.puedeAnularCobranza);
   const [idCredito, setIdCredito] = useState('');
   const [buscado, setBuscado]     = useState(false);
   const [form, setForm]           = useState({ idCredito:'', idCuota:'', importe:'' });
@@ -25,6 +27,14 @@ export default function Cobranzas() {
       if (String(form.idCredito) === idCredito) dispatch(fetchCobranzasPorCredito(idCredito));
     }
   };
+
+  const handleAnularCobranza = async (id) => {
+  if (!window.confirm(`¿Anular la cobranza #${id}?`)) return;
+
+  await dispatch(anularCobranzaThunk(id));
+};
+
+  
 
   return (
     <div style={styles.page}>
@@ -56,11 +66,40 @@ export default function Cobranzas() {
           {!loading && lista.length === 0 && <p style={styles.empty}>Sin cobranzas registradas.</p>}
           {lista.length > 0 && (
             <table style={styles.table}>
-              <thead><tr><th>ID</th><th>Crédito</th><th>Cuota</th><th>Importe</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Crédito</th>
+                  <th>Cuota</th>
+                  <th>Importe</th>
+                  <th>Estado</th>
+                  {puedeAnularCobranza && <th>Acciones</th>}
+              </tr>
+            </thead>
               <tbody>
-                {lista.map(c => (
-                  <tr key={c.id}><td>#{c.id}</td><td>{c.idCredito}</td><td>{c.idCuota}</td><td>${c.importe}</td></tr>
-                ))}
+                  {lista.map(c => (
+                    <tr key={c.id}>
+                      <td>#{c.id}</td>
+                      <td>{c.idCredito}</td>
+                      <td>{c.idCuota}</td>
+                      <td>${c.importe}</td>
+                      <td>{c.anulada ? 'Anulada' : 'Activa'}</td>
+                      {puedeAnularCobranza && (
+                        <td>
+                          <button
+                            style={{
+                              ...styles.btn,
+                              backgroundColor: c.anulada ? '#999' : '#c62828'
+                            }}
+                            onClick={() => handleAnularCobranza(c.id)}
+                            disabled={loading || c.anulada}
+                          >
+                            {c.anulada ? 'Cobranza anulada' : 'Anular'}
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
               </tbody>
             </table>
           )}

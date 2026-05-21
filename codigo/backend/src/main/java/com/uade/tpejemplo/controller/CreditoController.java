@@ -2,10 +2,13 @@ package com.uade.tpejemplo.controller;
 
 import com.uade.tpejemplo.dto.request.CreditoRequest;
 import com.uade.tpejemplo.dto.response.CreditoResponse;
+import com.uade.tpejemplo.model.Usuario;
 import com.uade.tpejemplo.service.CreditoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,5 +36,15 @@ public class CreditoController {
     @GetMapping("/cliente/{cuit}")
     public ResponseEntity<List<CreditoResponse>> listarPorCliente(@PathVariable String cuit) {
         return ResponseEntity.ok(creditoService.listarPorCliente(cuit));
+    }
+    @PutMapping("/{id}/anular")
+    public ResponseEntity<CreditoResponse> anular(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Usuario usuario) {
+        if (usuario == null || !usuario.isPuedeAnularCredito()) {
+            throw new AccessDeniedException("No tenes permiso para anular creditos");
+        }
+
+        return ResponseEntity.ok(creditoService.anular(id));
     }
 }

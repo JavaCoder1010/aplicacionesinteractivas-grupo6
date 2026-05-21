@@ -65,7 +65,7 @@ export default function Clientes() {
     dispatch(deleteCliente(cuit));
   };
 
-  return (
+   return (
     <div style={styles.page}>
       <h2 style={styles.title}>Clientes</h2>
 
@@ -194,3 +194,6 @@ const styles = {
   trEditing:   { borderBottom: '1px solid #90caf9', backgroundColor: '#e3f2fd' },
   td:          { padding: '8px', verticalAlign: 'middle' },
 };
+
+
+

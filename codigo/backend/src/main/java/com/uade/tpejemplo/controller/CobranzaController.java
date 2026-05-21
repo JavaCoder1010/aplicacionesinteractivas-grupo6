@@ -2,10 +2,13 @@ package com.uade.tpejemplo.controller;
 
 import com.uade.tpejemplo.dto.request.CobranzaRequest;
 import com.uade.tpejemplo.dto.response.CobranzaResponse;
+import com.uade.tpejemplo.model.Usuario;
 import com.uade.tpejemplo.service.CobranzaService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,5 +31,16 @@ public class CobranzaController {
     @GetMapping("/credito/{idCredito}")
     public ResponseEntity<List<CobranzaResponse>> listarPorCredito(@PathVariable Long idCredito) {
         return ResponseEntity.ok(cobranzaService.listarPorCredito(idCredito));
+    }
+
+    @PutMapping("/{id}/anular")
+    public ResponseEntity<CobranzaResponse> anular(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Usuario usuario) {
+        if (usuario == null || !usuario.isPuedeAnularCobranza()) {
+            throw new AccessDeniedException("No tenes permiso para anular cobranzas");
+        }
+
+        return ResponseEntity.ok(cobranzaService.anular(id));
     }
 }

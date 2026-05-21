@@ -41,6 +41,8 @@ export default function Etiquetas() {
 
   const handleCancel = () => { setForm(EMPTY_FORM); setEditingId(null); };
 
+  
+
   return (
     <div style={styles.page}>
       <h2 style={styles.title}>🏷️ Etiquetas</h2>

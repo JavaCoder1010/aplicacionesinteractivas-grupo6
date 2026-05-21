@@ -3,6 +3,7 @@ package com.uade.tpejemplo.service.impl;
 import com.uade.tpejemplo.dto.request.CreditoRequest;
 import com.uade.tpejemplo.dto.response.CreditoResponse;
 import com.uade.tpejemplo.dto.response.CuotaResponse;
+import com.uade.tpejemplo.exception.BusinessException;
 import com.uade.tpejemplo.exception.ResourceNotFoundException;
 import com.uade.tpejemplo.model.Cliente;
 import com.uade.tpejemplo.model.Credito;
@@ -15,6 +16,7 @@ import com.uade.tpejemplo.repository.CuotaRepository;
 import com.uade.tpejemplo.service.CreditoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,14 +46,15 @@ public class CreditoServiceImpl implements CreditoService {
             .orElseThrow(() -> new ResourceNotFoundException("Cliente", "CUIT", request.getCuitCliente()));
 
         Credito credito = new Credito(
-            null,
-            cliente,
-            request.getDeudaOriginal(),
-            request.getFecha(),
-            request.getImporteCuota(),
-            request.getCantidadCuotas(),
-            null
-        );
+    null,
+    cliente,
+    request.getDeudaOriginal(),
+    request.getFecha(),
+    request.getImporteCuota(),
+    request.getCantidadCuotas(),
+    null,
+    false
+);
         creditoRepository.save(credito);
 
         // Generar cuotas automáticamente con vencimiento mensual
@@ -100,14 +103,32 @@ public class CreditoServiceImpl implements CreditoService {
             .toList();
 
         return new CreditoResponse(
-            credito.getId(),
-            credito.getCliente().getCuit(),
-            credito.getCliente().getNombre(),
-            credito.getDeudaOriginal(),
-            credito.getFecha(),
-            credito.getImporteCuota(),
-            credito.getCantidadCuotas(),
-            cuotasResponse
-        );
+    credito.getId(),
+    credito.getCliente().getCuit(),
+    credito.getCliente().getNombre(),
+    credito.getDeudaOriginal(),
+    credito.getFecha(),
+    credito.getImporteCuota(),
+    credito.getCantidadCuotas(),
+    cuotasResponse,
+    credito.isAnulado()
+);
+    }
+    @Override
+    @Transactional
+    public CreditoResponse anular(Long id) {
+        Credito credito = creditoRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Crédito", "id", id));
+
+        if (credito.isAnulado()) {
+            throw new BusinessException("El crédito ya se encuentra anulado");
+        }
+
+        credito.setAnulado(true);
+        creditoRepository.save(credito);
+
+        List<Cuota> cuotas = cuotaRepository.findByIdIdCredito(id);
+
+        return toResponse(credito, cuotas);
     }
 }

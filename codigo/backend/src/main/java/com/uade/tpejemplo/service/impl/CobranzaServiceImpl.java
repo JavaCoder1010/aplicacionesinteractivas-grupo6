@@ -10,6 +10,9 @@ import com.uade.tpejemplo.model.CuotaId;
 import com.uade.tpejemplo.repository.CobranzaRepository;
 import com.uade.tpejemplo.repository.CuotaRepository;
 import com.uade.tpejemplo.service.CobranzaService;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +43,12 @@ public class CobranzaServiceImpl implements CobranzaService {
             );
         }
 
-        Cobranza cobranza = new Cobranza(null, cuota, request.getImporte());
+        Cobranza cobranza = new Cobranza(
+    null,
+    cuota,
+    request.getImporte(),
+    false
+);
         cobranzaRepository.save(cobranza);
         return toResponse(cobranza);
     }
@@ -52,12 +60,29 @@ public class CobranzaServiceImpl implements CobranzaService {
             .toList();
     }
 
-    private CobranzaResponse toResponse(Cobranza cobranza) {
-        return new CobranzaResponse(
-            cobranza.getId(),
-            cobranza.getCuota().getId().getIdCredito(),
-            cobranza.getCuota().getId().getIdCuota(),
-            cobranza.getImporte()
-        );
+   private CobranzaResponse toResponse(Cobranza cobranza) {
+    return new CobranzaResponse(
+        cobranza.getId(),
+        cobranza.getCuota().getId().getIdCredito(),
+        cobranza.getCuota().getId().getIdCuota(),
+        cobranza.getImporte(),
+        cobranza.isAnulada()
+    );
+}
+
+    @Override
+    @Transactional
+    public CobranzaResponse anular(Long id) {
+        Cobranza cobranza = cobranzaRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Cobranza", "id", id));
+
+        if (cobranza.isAnulada()) {
+            throw new BusinessException("La cobranza ya se encuentra anulada");
+        }
+
+        cobranza.setAnulada(true);
+        cobranzaRepository.save(cobranza);
+
+        return toResponse(cobranza);
     }
 }

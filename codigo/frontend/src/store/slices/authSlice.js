@@ -20,15 +20,22 @@ export const registerThunk = createAsyncThunk('auth/register', async (data, { re
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user:    JSON.parse(localStorage.getItem('authUser')) ?? null,
+    user:    JSON.parse(sessionStorage.getItem('authUser')) ?? null,
     loading: false,
     error:   null,
   },
   reducers: {
     logout(state) {
       state.user = null;
-      localStorage.removeItem('authUser');
-      localStorage.removeItem('token');
+      state.loading = false;
+      state.error = null;
+
+      sessionStorage.removeItem('authUser');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('username');
+      sessionStorage.removeItem('rol');
+      sessionStorage.removeItem('puedeAnularCredito');
+      sessionStorage.removeItem('puedeAnularCobranza');
     },
     clearError(state) {
       state.error = null;
@@ -39,9 +46,18 @@ const authSlice = createSlice({
     const onFulfilled = (state, action) => {
       state.loading = false;
       state.user = action.payload;
-      localStorage.setItem('authUser', JSON.stringify(action.payload));
-      // sincronizar token para apiClient
-      localStorage.setItem('token', action.payload.token);
+      sessionStorage.setItem('authUser', JSON.stringify(action.payload));
+    };
+    const onRegisterFulfilled = (state) => {
+      state.loading = false;
+      state.error = null;
+      state.user = null;
+      sessionStorage.removeItem('authUser');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('username');
+      sessionStorage.removeItem('rol');
+      sessionStorage.removeItem('puedeAnularCredito');
+      sessionStorage.removeItem('puedeAnularCobranza');
     };
     const onRejected = (state, action) => { state.loading = false; state.error = action.payload; };
 
@@ -50,7 +66,7 @@ const authSlice = createSlice({
       .addCase(loginThunk.fulfilled,   onFulfilled)
       .addCase(loginThunk.rejected,    onRejected)
       .addCase(registerThunk.pending,  onPending)
-      .addCase(registerThunk.fulfilled,onFulfilled)
+      .addCase(registerThunk.fulfilled,onRegisterFulfilled)
       .addCase(registerThunk.rejected, onRejected);
   },
 });

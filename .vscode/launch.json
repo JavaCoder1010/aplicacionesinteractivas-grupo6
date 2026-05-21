@@ -8,6 +8,17 @@
             "mainClass": "com.uade.tpejemplo.TpEjemploApplication",
             "projectName": "com.uade-tpejemplo",
             "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-TpEjemploApplication<tpejemplo>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.uade.tpejemplo.TpEjemploApplication",
+            "projectName": "tpejemplo",
+            "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
     ]

@@ -47,28 +47,46 @@ public class AuthController {
         }
 
         Usuario usuario = Usuario.builder()
-            .username(request.getUsername())
-            .password(passwordEncoder.encode(request.getPassword()))
-            .rol(Rol.USER)
-            .build();
+    .username(request.getUsername())
+    .password(passwordEncoder.encode(request.getPassword()))
+    .rol(Rol.USER)
+    .puedeAnularCredito(false)
+    .puedeAnularCobranza(false)
+    .build();
 
         usuarioRepository.save(usuario);
 
         String token = jwtUtil.generarToken(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .body(new AuthResponse(token, usuario.getUsername(), usuario.getRol().name()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+    new AuthResponse(
+        token,
+        usuario.getUsername(),
+        usuario.getRol().name(),
+        usuario.isPuedeAnularCredito(),
+        usuario.isPuedeAnularCobranza()
+    )
+);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
+public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+    );
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
-        String token = jwtUtil.generarToken(userDetails);
+    UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+    String token = jwtUtil.generarToken(userDetails);
 
-        Usuario usuario = (Usuario) userDetails;
-        return ResponseEntity.ok(new AuthResponse(token, usuario.getUsername(), usuario.getRol().name()));
-    }
+    Usuario usuario = (Usuario) userDetails;
+
+    return ResponseEntity.ok(
+        new AuthResponse(
+            token,
+            usuario.getUsername(),
+            usuario.getRol().name(),
+            usuario.isPuedeAnularCredito(),
+            usuario.isPuedeAnularCobranza()
+        )
+    );
+}
 }
