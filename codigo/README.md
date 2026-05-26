@@ -848,12 +848,12 @@ public class EtiquetaServiceImpl implements EtiquetaService {
 #### Estructura de un slice (todos los slices siguen este patrón)
 ```javascript
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { etiquetasApi } from '../../api/etiquetas';
+import { getEtiquetas } from '../../api/etiquetas';
 
 export const fetchEtiquetas = createAsyncThunk(
   'etiquetas/fetchAll',
   async (_, { rejectWithValue }) => {
-    try { return await etiquetasApi.getAll(); }
+    try { return await getEtiquetas(); }
     catch (err) { return rejectWithValue(err.message); }
   }
 );
@@ -862,7 +862,7 @@ const etiquetasSlice = createSlice({
   name: 'etiquetas',
   initialState: { lista: [], loading: false, error: null },
   reducers: {
-    clearEtiquetas(state) { state.lista = []; }
+    clearError(state) { state.error = null; }
   },
   extraReducers: (builder) => {
     builder
@@ -872,7 +872,7 @@ const etiquetasSlice = createSlice({
   }
 });
 
-export const { clearEtiquetas } = etiquetasSlice.actions;
+export const { clearError } = etiquetasSlice.actions;
 export default etiquetasSlice.reducer;
 ```
 
@@ -881,17 +881,15 @@ export default etiquetasSlice.reducer;
 // api/etiquetas.js
 import { api } from './apiClient';
 
-export const etiquetasApi = {
-  getAll:            ()            => api.get('/etiquetas'),
-  getById:           (id)          => api.get(`/etiquetas/${id}`),
-  create:            (body)        => api.post('/etiquetas', body),
-  update:            (id, body)    => api.put(`/etiquetas/${id}`, body),
-  delete:            (id)          => api.delete(`/etiquetas/${id}`),
-  getByCliente:      (cuit)        => api.get(`/clientes/${cuit}/etiquetas`),
-  getClientesByTag:  (id)          => api.get(`/etiquetas/${id}/clientes`),
-  asignar:           (cuit, eid)   => api.post(`/clientes/${cuit}/etiquetas/${eid}`),
-  quitar:            (cuit, eid)   => api.delete(`/clientes/${cuit}/etiquetas/${eid}`),
-};
+export const getEtiquetas           = ()                 => api.get('/etiquetas');
+export const getEtiqueta            = (id)               => api.get(`/etiquetas/${id}`);
+export const crearEtiqueta          = (data)             => api.post('/etiquetas', data);
+export const actualizarEtiqueta     = (id, data)         => api.put(`/etiquetas/${id}`, data);
+export const eliminarEtiqueta       = (id)               => api.delete(`/etiquetas/${id}`);
+export const getEtiquetasDeCliente  = (cuit)             => api.get(`/clientes/${cuit}/etiquetas`);
+export const getClientesPorEtiqueta = (id)               => api.get(`/etiquetas/${id}/clientes`);
+export const asignarEtiqueta        = (cuit, etiquetaId) => api.post(`/clientes/${cuit}/etiquetas/${etiquetaId}`);
+export const quitarEtiqueta         = (cuit, etiquetaId) => api.delete(`/clientes/${cuit}/etiquetas/${etiquetaId}`);
 ```
 
 #### Renderizado condicional de estados en páginas
