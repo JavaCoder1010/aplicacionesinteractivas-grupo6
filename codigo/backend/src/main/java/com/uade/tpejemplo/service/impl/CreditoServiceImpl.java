@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,12 +47,16 @@ public class CreditoServiceImpl implements CreditoService {
         Cliente cliente = clienteRepository.findByCuit(request.getCuitCliente())
             .orElseThrow(() -> new ResourceNotFoundException("Cliente", "CUIT", request.getCuitCliente()));
 
+        // Calcular importe de cuota automáticamente
+        BigDecimal importeCuota = request.getDeudaOriginal()
+            .divide(BigDecimal.valueOf(request.getCantidadCuotas()), 2, RoundingMode.HALF_UP);
+
         Credito credito = new Credito(
     null,
     cliente,
     request.getDeudaOriginal(),
     request.getFecha(),
-    request.getImporteCuota(),
+    importeCuota,
     request.getCantidadCuotas(),
     null,
     false

@@ -17,9 +17,12 @@ export default function Creditos() {
     cuitCliente: '',
     deudaOriginal: '',
     fecha: '',
-    importeCuota: '',
     cantidadCuotas: ''
   });
+
+  const importeCuotaCalculado = form.deudaOriginal && form.cantidadCuotas && Number(form.cantidadCuotas) > 0
+    ? (Number(form.deudaOriginal) / Number(form.cantidadCuotas)).toFixed(2)
+    : null;
 
 
   const handleAnularCredito = async (id) => {
@@ -46,7 +49,6 @@ export default function Creditos() {
       cuitCliente: form.cuitCliente,
       deudaOriginal: Number(form.deudaOriginal),
       fecha: form.fecha,
-      importeCuota: Number(form.importeCuota),
       cantidadCuotas: Number(form.cantidadCuotas),
     };
 
@@ -59,7 +61,6 @@ export default function Creditos() {
         cuitCliente: '',
         deudaOriginal: '',
         fecha: '',
-        importeCuota: '',
         cantidadCuotas: ''
       });
 
@@ -118,14 +119,11 @@ export default function Creditos() {
             required
           />
 
-          <input
-            style={styles.input}
-            placeholder="Importe cuota"
-            value={form.importeCuota}
-            onChange={e => setForm({ ...form, importeCuota: e.target.value })}
-            type="number"
-            required
-          />
+          {importeCuotaCalculado && (
+            <div style={styles.preview}>
+              Importe por cuota: <strong>${importeCuotaCalculado}</strong>
+            </div>
+          )}
 
           <input
             style={styles.input}
@@ -231,5 +229,15 @@ const styles = {
     padding: '16px',
     marginBottom: '12px',
     backgroundColor: '#fafafa'
+  },
+  preview: {
+    padding: '10px',
+    backgroundColor: '#e8f5e9',
+    borderRadius: '6px',
+    color: '#2e7d32',
+    fontSize: '0.95rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
   }
 };
