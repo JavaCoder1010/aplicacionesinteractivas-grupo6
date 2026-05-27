@@ -12,7 +12,8 @@ async function request(path, options = {}) {
     throw new Error(error.mensajes?.[0] ?? 'Error desconocido');
   }
 
-  return res.status === 204 ? null : res.json();
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
 export const api = {
