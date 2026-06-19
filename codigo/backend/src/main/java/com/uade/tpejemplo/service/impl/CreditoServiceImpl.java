@@ -130,10 +130,19 @@ public class CreditoServiceImpl implements CreditoService {
             throw new BusinessException("El crédito ya se encuentra anulado");
         }
 
+        // Verificar que no tenga cobranzas registradas
+        List<Cuota> cuotas = cuotaRepository.findByIdIdCredito(id);
+        boolean tieneCobranzas = cuotas.stream()
+            .anyMatch(cuota -> cobranzaRepository.existsByCuotaIdIdCreditoAndCuotaIdIdCuota(
+                cuota.getId().getIdCredito(), cuota.getId().getIdCuota()));
+
+        if (tieneCobranzas) {
+            throw new BusinessException(
+                "No se puede anular el crédito " + id + " porque tiene cobranzas registradas.");
+        }
+
         credito.setAnulado(true);
         creditoRepository.save(credito);
-
-        List<Cuota> cuotas = cuotaRepository.findByIdIdCredito(id);
 
         return toResponse(credito, cuotas);
     }

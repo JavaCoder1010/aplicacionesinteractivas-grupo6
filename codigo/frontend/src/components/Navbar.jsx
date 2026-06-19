@@ -21,6 +21,9 @@ export default function Navbar() {
           <Link to="/etiquetas" style={styles.link}>Etiquetas</Link>
           <Link to="/creditos"  style={styles.link}>Créditos</Link>
           <Link to="/cobranzas" style={styles.link}>Cobranzas</Link>
+          {user.rol === 'ADMIN' && (
+            <Link to="/admin/permisos" style={styles.link}>Permisos</Link>
+          )}
           <span style={styles.user}>👤 {user.username}</span>
           <button onClick={handleLogout} style={styles.btn}>Salir</button>
         </div>
@@ -37,3 +40,4 @@ const styles = {
   user:  { color:'#b0bec5', fontSize:'0.9rem' },
   btn:   { background:'#e53935', color:'white', border:'none', padding:'6px 14px', borderRadius:'6px', cursor:'pointer' },
 };
+

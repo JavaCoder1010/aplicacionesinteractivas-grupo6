@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "cobranzas")
@@ -31,6 +32,10 @@ public class Cobranza {
     @Column(name = "importe", nullable = false, precision = 12, scale = 2)
     private BigDecimal importe;
 
+    @Column(name = "fecha_cobranza", nullable = false)
+    private LocalDate fechaCobranza = LocalDate.now();
+
     @Column(nullable = false)
     private boolean anulada = false;
 }
+

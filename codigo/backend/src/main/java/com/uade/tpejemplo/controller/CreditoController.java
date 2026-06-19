@@ -37,12 +37,12 @@ public class CreditoController {
     public ResponseEntity<List<CreditoResponse>> listarPorCliente(@PathVariable String cuit) {
         return ResponseEntity.ok(creditoService.listarPorCliente(cuit));
     }
-    @PutMapping("/{id}/anular")
+    @DeleteMapping("/{id}")
     public ResponseEntity<CreditoResponse> anular(
             @PathVariable Long id,
             @AuthenticationPrincipal Usuario usuario) {
         if (usuario == null || !usuario.isPuedeAnularCredito()) {
-            throw new AccessDeniedException("No tenes permiso para anular creditos");
+            throw new AccessDeniedException("No tiene permisos para anular créditos.");
         }
 
         return ResponseEntity.ok(creditoService.anular(id));

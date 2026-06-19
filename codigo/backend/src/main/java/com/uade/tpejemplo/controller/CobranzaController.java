@@ -33,12 +33,12 @@ public class CobranzaController {
         return ResponseEntity.ok(cobranzaService.listarPorCredito(idCredito));
     }
 
-    @PutMapping("/{id}/anular")
+    @DeleteMapping("/{id}")
     public ResponseEntity<CobranzaResponse> anular(
             @PathVariable Long id,
             @AuthenticationPrincipal Usuario usuario) {
         if (usuario == null || !usuario.isPuedeAnularCobranza()) {
-            throw new AccessDeniedException("No tenes permiso para anular cobranzas");
+            throw new AccessDeniedException("No tiene permisos para anular cobranzas.");
         }
 
         return ResponseEntity.ok(cobranzaService.anular(id));

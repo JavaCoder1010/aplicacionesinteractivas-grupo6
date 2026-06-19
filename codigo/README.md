@@ -603,16 +603,16 @@ Credito (1) ────< Cuota (N)
 Cuota (1)   ────< Cobranza (N)
 ```
 
-#### Modificaciones para Entrega 3
+#### Modificaciones implementadas para Entrega 3
 ```java
-// Usuario.java — agregar
+// Usuario.java — agregados
 private boolean puedeAnularCredito = false;
 private boolean puedeAnularCobranza = false;
 
-// Credito.java — agregar
+// Credito.java — agregados
 private boolean anulado = false;
 
-// Cobranza.java — agregar
+// Cobranza.java — agregados
 private LocalDate fechaCobranza = LocalDate.now();
 private boolean anulada = false;
 ```
@@ -747,14 +747,13 @@ boolean puedeAnularCredito, puedeAnularCobranza;
 6. Spring Security evalúa la ruta → permite o rechaza
 ```
 
-**SecurityConfig actual:** solo requiere que el token sea válido (`anyRequest().authenticated()`). No distingue roles en rutas (solo usa `@PreAuthorize` para Entrega 3).
+**SecurityConfig:** Requiere que el token sea válido (`anyRequest().authenticated()`) y habilita la seguridad a nivel de métodos para validar roles.
 
-**Para Entrega 3 agregar en SecurityConfig:**
 ```java
 @EnableMethodSecurity
 public class SecurityConfig { ... }
 ```
-Y proteger endpoints admin:
+Los endpoints de administrador están protegidos con:
 ```java
 @PreAuthorize("hasRole('ADMIN')")
 ```
@@ -973,25 +972,25 @@ export default function Etiquetas() {
 
 #### Entrega 3 — Estado global + permisos (23 de junio)
 
-| Archivo | Acción | Cambio principal |
+| Archivo | Estado | Cambio principal |
 |---|---|---|
-| `model/Usuario.java` | MODIFICAR | + `puedeAnularCredito`, `puedeAnularCobranza` |
-| `model/Credito.java` | MODIFICAR | + `anulado` |
-| `model/Cobranza.java` | MODIFICAR | + `fechaCobranza`, `anulada` |
-| `config/SecurityConfig.java` | MODIFICAR | + `@EnableMethodSecurity` |
-| `controller/AdminController.java` | CREAR | GET + PUT permisos |
-| `controller/CreditoController.java` | MODIFICAR | + `DELETE /{id}` |
-| `controller/CobranzaController.java` | MODIFICAR | + `DELETE /{id}` |
-| `dto/request/PermisosRequest.java` | CREAR | — |
-| `dto/response/UsuarioResponse.java` | CREAR | — |
-| `dto/response/AuthResponse.java` | MODIFICAR | + permisos |
-| `store/slices/permisosSlice.js` | CREAR | — |
-| `store/slices/authSlice.js` | MODIFICAR | `user` incluye permisos |
-| `pages/GestorPermisos.jsx` | CREAR | Solo ADMIN |
-| `pages/Creditos.jsx` | MODIFICAR | Botón Anular condicional |
-| `pages/Cobranzas.jsx` | MODIFICAR | Botón Anular condicional |
-| `components/Navbar.jsx` | MODIFICAR | Link `/admin/permisos` solo para ADMIN |
-| `components/PrivateRoute.jsx` | MODIFICAR | Soporte para `rolRequerido` |
+| `model/Usuario.java` | MODIFICADO | + `puedeAnularCredito`, `puedeAnularCobranza` |
+| `model/Credito.java` | MODIFICADO | + `anulado` |
+| `model/Cobranza.java` | MODIFICADO | + `fechaCobranza`, `anulada` |
+| `config/SecurityConfig.java` | MODIFICADO | + `@EnableMethodSecurity` |
+| `controller/AdminController.java` | CREADO | GET + PUT permisos |
+| `controller/CreditoController.java` | MODIFICADO | + `DELETE /{id}` |
+| `controller/CobranzaController.java` | MODIFICADO | + `DELETE /{id}` |
+| `dto/request/PermisosRequest.java` | CREADO | — |
+| `dto/response/UsuarioResponse.java` | CREADO | — |
+| `dto/response/AuthResponse.java` | MODIFICADO | + permisos |
+| `store/slices/permisosSlice.js` | CREADO | — |
+| `store/slices/authSlice.js` | MODIFICADO | `user` incluye permisos |
+| `pages/GestorPermisos.jsx` | CREADO | Solo ADMIN |
+| `pages/Creditos.jsx` | MODIFICADO | Botón Anular condicional |
+| `pages/Cobranzas.jsx` | MODIFICADO | Botón Anular condicional |
+| `components/Navbar.jsx` | MODIFICADO | Link `/admin/permisos` solo para ADMIN |
+| `components/PrivateRoute.jsx` | MODIFICADO | Soporte para `rolRequerido` |
 
 ---
 
@@ -1321,6 +1320,20 @@ Thunks:
 - asignarEtiqueta({ cuit, etiquetaId })
 - quitarEtiqueta({ cuit, etiquetaId })
 - fetchClientesPorEtiqueta(etiquetaId)
+```
+
+#### `permisosSlice.js` (Entrega 3)
+
+```javascript
+state.permisos = {
+  usuarios: [], // lista de usuarios con rol USER
+  loading: false,
+  error: null
+}
+
+Thunks:
+- fetchUsuarios()
+- updatePermisos({ id, data })
 ```
 
 ---

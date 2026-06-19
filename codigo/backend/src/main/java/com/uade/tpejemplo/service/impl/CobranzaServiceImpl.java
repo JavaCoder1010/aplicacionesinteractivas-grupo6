@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -44,11 +45,12 @@ public class CobranzaServiceImpl implements CobranzaService {
         }
 
         Cobranza cobranza = new Cobranza(
-    null,
-    cuota,
-    request.getImporte(),
-    false
-);
+            null,
+            cuota,
+            request.getImporte(),
+            LocalDate.now(),
+            false
+        );
         cobranzaRepository.save(cobranza);
         return toResponse(cobranza);
     }
@@ -60,15 +62,15 @@ public class CobranzaServiceImpl implements CobranzaService {
             .toList();
     }
 
-   private CobranzaResponse toResponse(Cobranza cobranza) {
-    return new CobranzaResponse(
-        cobranza.getId(),
-        cobranza.getCuota().getId().getIdCredito(),
-        cobranza.getCuota().getId().getIdCuota(),
-        cobranza.getImporte(),
-        cobranza.isAnulada()
-    );
-}
+    private CobranzaResponse toResponse(Cobranza cobranza) {
+        return new CobranzaResponse(
+            cobranza.getId(),
+            cobranza.getCuota().getId().getIdCredito(),
+            cobranza.getCuota().getId().getIdCuota(),
+            cobranza.getImporte(),
+            cobranza.isAnulada()
+        );
+    }
 
     @Override
     @Transactional
@@ -80,9 +82,14 @@ public class CobranzaServiceImpl implements CobranzaService {
             throw new BusinessException("La cobranza ya se encuentra anulada");
         }
 
+        if (!cobranza.getFechaCobranza().equals(LocalDate.now())) {
+            throw new BusinessException("Solo se pueden anular cobranzas del día de hoy.");
+        }
+
         cobranza.setAnulada(true);
         cobranzaRepository.save(cobranza);
 
         return toResponse(cobranza);
     }
 }
+
