@@ -27,6 +27,11 @@ public class Etiqueta {
     @Column(name = "nombre", nullable = false, unique = true, length = 50)
     private String nombre;
 
+    @NotBlank
+    @Size(max = 50)
+    @Column(name = "examen", nullable = false, unique = true, length = 50)
+    private String examen;
+
     @Size(max = 255)
     @Column(name = "descripcion", length = 255)
     private String descripcion;  // nullable

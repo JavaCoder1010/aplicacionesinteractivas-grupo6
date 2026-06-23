@@ -8,6 +8,7 @@ import Creditos from './pages/Creditos';
 import Cobranzas from './pages/Cobranzas';
 import Etiquetas from './pages/Etiquetas';
 import ClienteEtiquetas from './pages/ClienteEtiquetas';
+import Permisos from './pages/Permisos';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/creditos"                      element={<PrivateRoute><Creditos /></PrivateRoute>} />
         <Route path="/cobranzas"                     element={<PrivateRoute><Cobranzas /></PrivateRoute>} />
         <Route path="/etiquetas"                     element={<PrivateRoute><Etiquetas /></PrivateRoute>} />
+        <Route path="/admin/permisos"                element={<PrivateRoute requireAdmin={true}><Permisos /></PrivateRoute>} />
         <Route path="*"                              element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

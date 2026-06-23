@@ -52,6 +52,7 @@ public class EtiquetaServiceImpl implements EtiquetaService {
         Etiqueta etiqueta = new Etiqueta(
             null,
             request.getNombre(),
+            "examen_default",  // examen
             request.getDescripcion(),
             request.getColor(),
             null,   // fechaCreacion se asigna en @PrePersist

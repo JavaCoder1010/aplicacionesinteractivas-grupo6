@@ -3,6 +3,7 @@ package com.uade.tpejemplo.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,11 +25,13 @@ public class AdminController {
         this.usuarioService = usuarioService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UsuarioResponse>> listarUsuarios() {
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/permisos")
     public ResponseEntity<UsuarioResponse> modificarPermisos(
             @PathVariable Long id,
